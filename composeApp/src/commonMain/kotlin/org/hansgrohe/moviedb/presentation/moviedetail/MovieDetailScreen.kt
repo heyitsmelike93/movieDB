@@ -44,9 +44,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
 import com.example.shared.domain.model.MovieDetail
+import org.koin.compose.viewmodel.koinViewModel
+import org.koin.core.parameter.parametersOf
 
 @Composable
-fun MovieDetailScreen(viewModel: MovieDetailViewModel, onBack: () -> Unit) {
+fun MovieDetailScreen(movieId: Int, onBack: () -> Unit) {
+    val viewModel: MovieDetailViewModel = koinViewModel(parameters = { parametersOf(movieId) })
     val uiState by viewModel.uiState.collectAsState()
 
     when (val state = uiState) {

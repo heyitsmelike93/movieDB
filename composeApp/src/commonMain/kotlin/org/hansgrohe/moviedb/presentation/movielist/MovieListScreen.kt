@@ -35,9 +35,11 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import com.example.shared.domain.model.Movie
+import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
-fun MovieListScreen(viewModel: MovieListViewModel, onMovieClick: (Int) -> Unit) {
+fun MovieListScreen(onMovieClick: (Int) -> Unit) {
+    val viewModel: MovieListViewModel = koinViewModel()
     val uiState by viewModel.uiState.collectAsState()
 
     Box(modifier = Modifier.fillMaxSize()) {
