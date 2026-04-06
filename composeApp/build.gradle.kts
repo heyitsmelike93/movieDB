@@ -46,6 +46,10 @@ kotlin {
             implementation(libs.androidx.lifecycle.runtimeCompose)
             // Shared module
             implementation(project(":shared"))
+            // Material Icons Extended (for ArrowBack etc.)
+            implementation(compose.materialIconsExtended)
+            // Navigation
+            implementation(libs.navigation.compose)
             // Koin Compose
             implementation(libs.koin.compose)
             implementation(libs.koin.compose.viewmodel)
