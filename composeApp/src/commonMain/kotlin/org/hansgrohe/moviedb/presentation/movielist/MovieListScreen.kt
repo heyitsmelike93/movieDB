@@ -15,6 +15,7 @@ import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
@@ -36,7 +37,7 @@ import coil3.compose.AsyncImage
 import com.example.shared.domain.model.Movie
 
 @Composable
-fun MovieListScreen(viewModel: MovieListViewModel) {
+fun MovieListScreen(viewModel: MovieListViewModel, onMovieClick: (Int) -> Unit) {
     val state by viewModel.state.collectAsState()
 
     Box(modifier = Modifier.fillMaxSize()) {
@@ -52,14 +53,14 @@ fun MovieListScreen(viewModel: MovieListViewModel) {
                 )
             }
             else -> {
-                MovieGrid(state = state, onLoadMore = viewModel::loadMore)
+                MovieGrid(state = state, onMovieClick = onMovieClick, onLoadMore = viewModel::loadMore)
             }
         }
     }
 }
 
 @Composable
-private fun MovieGrid(state: MovieListState, onLoadMore: () -> Unit) {
+private fun MovieGrid(state: MovieListState, onMovieClick: (Int) -> Unit, onLoadMore: () -> Unit) {
     val gridState = rememberLazyGridState()
 
     val shouldLoadMore by remember {
@@ -83,7 +84,7 @@ private fun MovieGrid(state: MovieListState, onLoadMore: () -> Unit) {
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         items(state.movies.distinctBy { it.id }, key = { it.id }) { movie ->
-            MovieCard(movie)
+            MovieCard(movie = movie, onClick = { onMovieClick(movie.id) })
         }
         if (state.isLoadingMore) {
             item(span = { GridItemSpan(maxLineSpan) }) {
@@ -110,9 +111,9 @@ private fun MovieGrid(state: MovieListState, onLoadMore: () -> Unit) {
 }
 
 @Composable
-private fun MovieCard(movie: Movie) {
+private fun MovieCard(movie: Movie, onClick: () -> Unit) {
     Card(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier.fillMaxWidth().clickable(onClick = onClick),
         shape = RoundedCornerShape(8.dp)
     ) {
         Column {
