@@ -1,5 +1,7 @@
 package com.example.shared.data
 
-interface MovieApi {
+import com.example.shared.data.remote.dto.MovieListResponseDto
 
+interface MovieApi {
+    suspend fun getPopularMovies(page: Int): MovieListResponseDto
 }
