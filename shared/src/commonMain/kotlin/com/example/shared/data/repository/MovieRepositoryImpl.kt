@@ -1,8 +1,8 @@
 package com.example.shared.data.repository
 
 import com.example.shared.data.MovieApi
-import com.example.shared.data.remote.dto.MovieDto
-import com.example.shared.domain.model.Movie
+import com.example.shared.data.mapper.toDomain
+import com.example.shared.domain.model.MovieDetail
 import com.example.shared.domain.model.MoviePage
 import com.example.shared.domain.repository.MovieRepository
 
@@ -16,12 +16,7 @@ internal class MovieRepositoryImpl(private val api: MovieApi) : MovieRepository 
         )
     }
 
-    private fun MovieDto.toDomain() = Movie(
-        id = id,
-        title = title,
-        overview = overview,
-        posterPath = posterPath,
-        voteAverage = voteAverage,
-        releaseDate = releaseDate
-    )
+    override suspend fun getMovieDetail(movieId: Int): Result<MovieDetail> = runCatching {
+        api.getMovieDetail(movieId).toDomain()
+    }
 }
