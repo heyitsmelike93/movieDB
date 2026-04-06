@@ -11,7 +11,7 @@ class MovieApplication : Application() {
         super.onCreate()
         startKoin {
             androidContext(this@MovieApplication)
-            modules(sharedModule, appModule)
+            modules(sharedModule(BuildConfig.TMDB_API_KEY), appModule)
         }
     }
 }

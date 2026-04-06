@@ -1,5 +1,5 @@
-import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import java.util.Properties
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
@@ -30,12 +30,9 @@ kotlin {
         androidMain.dependencies {
             implementation(libs.compose.uiToolingPreview)
             implementation(libs.androidx.activity.compose)
-            // Koin
+            // Koin Android
             implementation(libs.koin.android)
-            implementation(libs.koin.compose)
-            implementation(libs.koin.compose.viewmodel)
-            // Coil
-            implementation(libs.coil.compose)
+            // Coil network backend (OkHttp, Android only)
             implementation(libs.coil.network.okhttp)
         }
         commonMain.dependencies {
@@ -47,6 +44,13 @@ kotlin {
             implementation(libs.compose.uiToolingPreview)
             implementation(libs.androidx.lifecycle.viewmodelCompose)
             implementation(libs.androidx.lifecycle.runtimeCompose)
+            // Shared module
+            implementation(project(":shared"))
+            // Koin Compose
+            implementation(libs.koin.compose)
+            implementation(libs.koin.compose.viewmodel)
+            // Coil
+            implementation(libs.coil.compose)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
@@ -64,6 +68,16 @@ android {
         targetSdk = libs.versions.android.targetSdk.get().toInt()
         versionCode = 1
         versionName = "1.0"
+        val localProperties = Properties()
+        val localPropertiesFile = rootProject.file("local.properties")
+        if (localPropertiesFile.exists()) {
+            localPropertiesFile.inputStream().use { localProperties.load(it) }
+        }
+        val tmdbApiKey = localProperties["tmdb.api.key"]?.toString() ?: ""
+        buildConfigField("String", "TMDB_API_KEY", "\"$tmdbApiKey\"")
+    }
+    buildFeatures {
+        buildConfig = true
     }
     packaging {
         resources {

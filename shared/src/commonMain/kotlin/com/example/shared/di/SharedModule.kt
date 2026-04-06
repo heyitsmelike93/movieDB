@@ -7,8 +7,8 @@ import com.example.shared.data.repository.MovieRepositoryImpl
 import com.example.shared.domain.repository.MovieRepository
 import org.koin.dsl.module
 
-val sharedModule = module {
-    single { createHttpClient() }
+fun sharedModule(apiKey: String) = module {
+    single { createHttpClient(apiKey) }
     single<MovieApi> { KtorMovieApi(get()) }
     single<MovieRepository> { MovieRepositoryImpl(get()) }
 }

@@ -5,12 +5,11 @@ import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.defaultRequest
 import io.ktor.client.plugins.logging.LogLevel
 import io.ktor.client.plugins.logging.Logging
-import io.ktor.client.request.header
-import io.ktor.http.HttpHeaders
+import io.ktor.http.takeFrom
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
 
-internal fun createHttpClient(): HttpClient = HttpClient {
+internal fun createHttpClient(apiKey: String): HttpClient = HttpClient {
     install(ContentNegotiation) {
         json(Json {
             ignoreUnknownKeys = true
@@ -21,7 +20,9 @@ internal fun createHttpClient(): HttpClient = HttpClient {
         level = LogLevel.HEADERS
     }
     defaultRequest {
-        url(ApiConfig.BASE_URL)
-        header(HttpHeaders.Authorization, "Bearer ${ApiConfig.READ_ACCESS_TOKEN}")
+        url {
+            takeFrom(ApiConfig.BASE_URL)
+            parameters.append("api_key", apiKey)
+        }
     }
 }
