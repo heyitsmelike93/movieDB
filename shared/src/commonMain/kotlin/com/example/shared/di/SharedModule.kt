@@ -9,8 +9,8 @@ import com.example.shared.domain.usecase.GetMovieDetailUseCase
 import com.example.shared.domain.usecase.GetPopularMoviesUseCase
 import org.koin.dsl.module
 
-fun sharedModule(apiKey: String) = module {
-    single { createHttpClient(apiKey) }
+fun sharedModule(apiKey: String, isDebug: Boolean) = module {
+    single { createHttpClient(apiKey, isDebug) }
     single<MovieApi> { KtorMovieApi(get()) }
     single<MovieRepository> { MovieRepositoryImpl(get()) }
     factory { GetPopularMoviesUseCase(get()) }

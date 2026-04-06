@@ -9,7 +9,7 @@ import io.ktor.http.takeFrom
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
 
-internal fun createHttpClient(apiKey: String): HttpClient = HttpClient {
+internal fun createHttpClient(apiKey: String, isDebug: Boolean): HttpClient = HttpClient {
     install(ContentNegotiation) {
         json(Json {
             ignoreUnknownKeys = true
@@ -17,7 +17,7 @@ internal fun createHttpClient(apiKey: String): HttpClient = HttpClient {
         })
     }
     install(Logging) {
-        level = LogLevel.HEADERS
+        level = if (isDebug) LogLevel.BODY else LogLevel.NONE
     }
     defaultRequest {
         url {
