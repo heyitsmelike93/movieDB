@@ -47,23 +47,25 @@ import com.example.shared.domain.model.MovieDetail
 
 @Composable
 fun MovieDetailScreen(viewModel: MovieDetailViewModel, onBack: () -> Unit) {
-    val state by viewModel.state.collectAsState()
+    val uiState by viewModel.uiState.collectAsState()
 
-    Box(modifier = Modifier.fillMaxSize()) {
-        when {
-            state.isLoading -> {
+    when (val state = uiState) {
+        is MovieDetailUiState.Loading -> {
+            Box(modifier = Modifier.fillMaxSize()) {
                 CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
             }
-            state.error != null -> {
+        }
+        is MovieDetailUiState.Error -> {
+            Box(modifier = Modifier.fillMaxSize()) {
                 ErrorContent(
-                    message = state.error!!,
+                    message = state.message,
                     onRetry = viewModel::loadMovieDetail,
                     modifier = Modifier.align(Alignment.Center)
                 )
             }
-            state.movieDetail != null -> {
-                DetailContent(detail = state.movieDetail!!, onBack = onBack)
-            }
+        }
+        is MovieDetailUiState.Success -> {
+            DetailContent(detail = state.movieDetail, onBack = onBack)
         }
     }
 }
@@ -101,7 +103,6 @@ private fun DetailContent(detail: MovieDetail, onBack: () -> Unit) {
                 .verticalScroll(rememberScrollState())
                 .padding(paddingValues)
         ) {
-            // Backdrop hero image with gradient overlay
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -118,16 +119,12 @@ private fun DetailContent(detail: MovieDetail, onBack: () -> Unit) {
                         .fillMaxSize()
                         .background(
                             Brush.verticalGradient(
-                                colors = listOf(
-                                    Color.Transparent,
-                                    Color.Black.copy(alpha = 0.6f)
-                                )
+                                colors = listOf(Color.Transparent, Color.Black.copy(alpha = 0.6f))
                             )
                         )
                 )
             }
 
-            // Poster + metadata row
             Row(
                 modifier = Modifier.padding(16.dp),
                 verticalAlignment = Alignment.Top
@@ -175,7 +172,6 @@ private fun DetailContent(detail: MovieDetail, onBack: () -> Unit) {
 
             HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
 
-            // Tagline
             if (!detail.tagline.isNullOrBlank()) {
                 Text(
                     text = "\"${detail.tagline}\"",
@@ -186,7 +182,6 @@ private fun DetailContent(detail: MovieDetail, onBack: () -> Unit) {
                 HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
             }
 
-            // Overview
             if (detail.overview.isNotBlank()) {
                 Column(modifier = Modifier.padding(16.dp)) {
                     Text(

@@ -1,5 +1,6 @@
 package org.hansgrohe.moviedb.presentation.movielist
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -15,7 +16,6 @@ import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
@@ -38,29 +38,39 @@ import com.example.shared.domain.model.Movie
 
 @Composable
 fun MovieListScreen(viewModel: MovieListViewModel, onMovieClick: (Int) -> Unit) {
-    val state by viewModel.state.collectAsState()
+    val uiState by viewModel.uiState.collectAsState()
 
     Box(modifier = Modifier.fillMaxSize()) {
-        when {
-            state.isLoading -> {
+        when (val state = uiState) {
+            is MovieListUiState.Loading -> {
                 CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
             }
-            state.error != null && state.movies.isEmpty() -> {
+            is MovieListUiState.Error -> {
                 ErrorContent(
-                    message = state.error!!,
+                    message = state.message,
                     onRetry = viewModel::loadMovies,
                     modifier = Modifier.align(Alignment.Center)
                 )
             }
-            else -> {
-                MovieGrid(state = state, onMovieClick = onMovieClick, onLoadMore = viewModel::loadMore)
+            is MovieListUiState.Success -> {
+                MovieGrid(
+                    state = state,
+                    onMovieClick = onMovieClick,
+                    onLoadMore = viewModel::loadMore,
+                    onRetryLoadMore = viewModel::retryLoadMore
+                )
             }
         }
     }
 }
 
 @Composable
-private fun MovieGrid(state: MovieListState, onMovieClick: (Int) -> Unit, onLoadMore: () -> Unit) {
+private fun MovieGrid(
+    state: MovieListUiState.Success,
+    onMovieClick: (Int) -> Unit,
+    onLoadMore: () -> Unit,
+    onRetryLoadMore: () -> Unit
+) {
     val gridState = rememberLazyGridState()
 
     val shouldLoadMore by remember {
@@ -98,11 +108,11 @@ private fun MovieGrid(state: MovieListState, onMovieClick: (Int) -> Unit, onLoad
                 }
             }
         }
-        if (state.error != null && state.movies.isNotEmpty()) {
+        if (state.loadMoreError != null) {
             item(span = { GridItemSpan(maxLineSpan) }) {
                 ErrorContent(
-                    message = state.error!!,
-                    onRetry = { /* handled by canLoadMore trigger */ },
+                    message = state.loadMoreError,
+                    onRetry = onRetryLoadMore,
                     modifier = Modifier.fillMaxWidth()
                 )
             }
