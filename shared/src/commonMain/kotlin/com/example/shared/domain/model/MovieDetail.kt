@@ -19,7 +19,7 @@ data class MovieDetail(
         get() = posterPath?.let { "https://image.tmdb.org/t/p/w500$it" }
 
     val backdropUrl: String?
-        get() = backdropPath?.let { "https://image.tmdb.org/t/p/w1280$it" }
+        get() = backdropPath?.let { "https://image.tmdb.org/t/p/w780$it" }
 
     val formattedRuntime: String?
         get() = runtime?.let { "${it / 60}h ${it % 60}m" }

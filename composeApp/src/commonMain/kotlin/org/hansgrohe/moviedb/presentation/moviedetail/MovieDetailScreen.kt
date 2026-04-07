@@ -149,7 +149,9 @@ private fun DetailContent(
                 AsyncImage(
                     model = detail.backdropUrl ?: detail.posterUrl,
                     contentDescription = null,
-                    modifier = Modifier.fillMaxSize(),
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(MaterialTheme.colorScheme.surfaceVariant),
                     contentScale = ContentScale.Crop
                 )
                 Box(
@@ -173,7 +175,8 @@ private fun DetailContent(
                     modifier = Modifier
                         .width(110.dp)
                         .aspectRatio(2f / 3f)
-                        .clip(RoundedCornerShape(8.dp)),
+                        .clip(RoundedCornerShape(8.dp))
+                        .background(MaterialTheme.colorScheme.surfaceVariant),
                     contentScale = ContentScale.Crop
                 )
                 Column(

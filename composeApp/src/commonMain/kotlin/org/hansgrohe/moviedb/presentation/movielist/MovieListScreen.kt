@@ -1,5 +1,6 @@
 package org.hansgrohe.moviedb.presentation.movielist
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -163,7 +164,8 @@ private fun MovieCard(movie: Movie, onClick: () -> Unit, onToggleFavorite: () ->
                     contentDescription = movie.title,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .aspectRatio(2f / 3f),
+                        .aspectRatio(2f / 3f)
+                        .background(MaterialTheme.colorScheme.surfaceVariant),
                     contentScale = ContentScale.Crop
                 )
                 IconButton(
