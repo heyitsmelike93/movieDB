@@ -35,6 +35,8 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import com.example.shared.domain.model.Movie
+import com.example.shared.presentation.movielist.MovieListUiState
+import com.example.shared.presentation.movielist.MovieListViewModel
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable

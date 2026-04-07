@@ -1,4 +1,4 @@
-package org.hansgrohe.moviedb.presentation.moviedetail
+package com.example.shared.presentation.moviedetail
 
 import com.example.shared.domain.model.MovieDetail
 

@@ -62,6 +62,8 @@ kotlin {
         commonMain {
             dependencies {
                 implementation(libs.kotlin.stdlib)
+                // Lifecycle ViewModel (KMP)
+                implementation(libs.androidx.lifecycle.viewmodel)
                 // Koin
                 implementation(libs.koin.core)
                 // Ktor

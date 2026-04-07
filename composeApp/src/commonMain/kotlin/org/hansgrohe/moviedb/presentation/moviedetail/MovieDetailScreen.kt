@@ -44,6 +44,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
 import com.example.shared.domain.model.MovieDetail
+import com.example.shared.presentation.moviedetail.MovieDetailUiState
+import com.example.shared.presentation.moviedetail.MovieDetailViewModel
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
 

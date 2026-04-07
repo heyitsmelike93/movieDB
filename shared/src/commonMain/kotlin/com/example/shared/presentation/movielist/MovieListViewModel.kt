@@ -1,4 +1,4 @@
-package org.hansgrohe.moviedb.presentation.movielist
+package com.example.shared.presentation.movielist
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
