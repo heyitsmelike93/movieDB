@@ -120,7 +120,7 @@ kotlin {
 
 sqldelight {
     databases {
-        create("MovieDatabase") {
+        create("FavoriteMovie") {
             packageName.set("com.example.shared.db")
         }
     }

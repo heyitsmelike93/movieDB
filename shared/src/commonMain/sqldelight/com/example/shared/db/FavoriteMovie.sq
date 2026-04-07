@@ -1,0 +1,20 @@
+CREATE TABLE favorite_movie (
+    movie_id INTEGER NOT NULL PRIMARY KEY
+);
+
+selectAllFavoriteMovieIds:
+SELECT movie_id
+FROM favorite_movie;
+
+selectFavoriteMovieById:
+SELECT movie_id
+FROM favorite_movie
+WHERE movie_id = ?;
+
+insertFavoriteMovie:
+INSERT OR REPLACE INTO favorite_movie(movie_id)
+VALUES (?);
+
+deleteFavoriteMovieById:
+DELETE FROM favorite_movie
+WHERE movie_id = ?;

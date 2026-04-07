@@ -17,10 +17,18 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.outlined.Star
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -30,6 +38,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -43,26 +52,38 @@ import org.koin.compose.viewmodel.koinViewModel
 fun MovieListScreen(onMovieClick: (Int) -> Unit) {
     val viewModel: MovieListViewModel = koinViewModel()
     val uiState by viewModel.uiState.collectAsState()
+    val snackbarHostState = remember { SnackbarHostState() }
 
-    Box(modifier = Modifier.fillMaxSize()) {
-        when (val state = uiState) {
-            is MovieListUiState.Loading -> {
-                CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
-            }
-            is MovieListUiState.Error -> {
-                ErrorContent(
-                    message = state.message,
-                    onRetry = viewModel::loadMovies,
-                    modifier = Modifier.align(Alignment.Center)
-                )
-            }
-            is MovieListUiState.Success -> {
-                MovieGrid(
-                    state = state,
-                    onMovieClick = onMovieClick,
-                    onLoadMore = viewModel::loadMore,
-                    onRetryLoadMore = viewModel::retryLoadMore
-                )
+    LaunchedEffect(Unit) {
+        viewModel.toastMessage.collect { message ->
+            snackbarHostState.showSnackbar(message)
+        }
+    }
+
+    Scaffold(
+        snackbarHost = { SnackbarHost(snackbarHostState) }
+    ) { paddingValues ->
+        Box(modifier = Modifier.fillMaxSize().padding(paddingValues)) {
+            when (val state = uiState) {
+                is MovieListUiState.Loading -> {
+                    CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+                }
+                is MovieListUiState.Error -> {
+                    ErrorContent(
+                        message = state.message,
+                        onRetry = viewModel::loadMovies,
+                        modifier = Modifier.align(Alignment.Center)
+                    )
+                }
+                is MovieListUiState.Success -> {
+                    MovieGrid(
+                        state = state,
+                        onMovieClick = onMovieClick,
+                        onLoadMore = viewModel::loadMore,
+                        onRetryLoadMore = viewModel::retryLoadMore,
+                        onToggleFavorite = viewModel::toggleFavorite
+                    )
+                }
             }
         }
     }
@@ -73,7 +94,8 @@ private fun MovieGrid(
     state: MovieListUiState.Success,
     onMovieClick: (Int) -> Unit,
     onLoadMore: () -> Unit,
-    onRetryLoadMore: () -> Unit
+    onRetryLoadMore: () -> Unit,
+    onToggleFavorite: (Int) -> Unit
 ) {
     val gridState = rememberLazyGridState()
 
@@ -98,7 +120,11 @@ private fun MovieGrid(
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         items(state.movies.distinctBy { it.id }, key = { it.id }) { movie ->
-            MovieCard(movie = movie, onClick = { onMovieClick(movie.id) })
+            MovieCard(
+                movie = movie,
+                onClick = { onMovieClick(movie.id) },
+                onToggleFavorite = { onToggleFavorite(movie.id) }
+            )
         }
         if (state.isLoadingMore) {
             item(span = { GridItemSpan(maxLineSpan) }) {
@@ -125,20 +151,32 @@ private fun MovieGrid(
 }
 
 @Composable
-private fun MovieCard(movie: Movie, onClick: () -> Unit) {
+private fun MovieCard(movie: Movie, onClick: () -> Unit, onToggleFavorite: () -> Unit) {
     Card(
         modifier = Modifier.fillMaxWidth().clickable(onClick = onClick),
         shape = RoundedCornerShape(8.dp)
     ) {
         Column {
-            AsyncImage(
-                model = movie.posterUrl,
-                contentDescription = movie.title,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .aspectRatio(2f / 3f),
-                contentScale = ContentScale.Crop
-            )
+            Box {
+                AsyncImage(
+                    model = movie.posterUrl,
+                    contentDescription = movie.title,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .aspectRatio(2f / 3f),
+                    contentScale = ContentScale.Crop
+                )
+                IconButton(
+                    onClick = onToggleFavorite,
+                    modifier = Modifier.align(Alignment.TopEnd)
+                ) {
+                    Icon(
+                        imageVector = if (movie.isFavorite) Icons.Filled.Star else Icons.Outlined.Star,
+                        contentDescription = if (movie.isFavorite) "Remove from favorites" else "Add to favorites",
+                        tint = if (movie.isFavorite) Color(0xFFFFD700) else Color.White
+                    )
+                }
+            }
             Column(modifier = Modifier.padding(8.dp)) {
                 Text(
                     text = movie.title,

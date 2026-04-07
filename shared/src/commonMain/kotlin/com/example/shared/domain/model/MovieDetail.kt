@@ -12,7 +12,8 @@ data class MovieDetail(
     val runtime: Int?,
     val genres: List<Genre>,
     val tagline: String?,
-    val status: String
+    val status: String,
+    val isFavorite: Boolean = false
 ) {
     val posterUrl: String?
         get() = posterPath?.let { "https://image.tmdb.org/t/p/w500$it" }

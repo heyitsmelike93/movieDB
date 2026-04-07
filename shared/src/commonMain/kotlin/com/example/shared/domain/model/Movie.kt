@@ -6,7 +6,8 @@ data class Movie(
     val overview: String,
     val posterPath: String?,
     val voteAverage: Double,
-    val releaseDate: String
+    val releaseDate: String,
+    val isFavorite: Boolean = false
 ) {
     val posterUrl: String?
         get() = posterPath?.let { "https://image.tmdb.org/t/p/w500$it" }
