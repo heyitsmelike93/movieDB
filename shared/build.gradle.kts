@@ -66,6 +66,7 @@ kotlin {
                 implementation(libs.androidx.lifecycle.viewmodel)
                 // Koin
                 implementation(libs.koin.core)
+                implementation(libs.koin.compose.viewmodel)
                 // Ktor
                 implementation(libs.ktor.client.core)
                 implementation(libs.ktor.client.content.negotiation)

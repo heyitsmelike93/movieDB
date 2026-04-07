@@ -115,7 +115,7 @@ private fun MovieGrid(
         if (state.loadMoreError != null) {
             item(span = { GridItemSpan(maxLineSpan) }) {
                 ErrorContent(
-                    message = state.loadMoreError,
+                    message = state.loadMoreError!!,
                     onRetry = onRetryLoadMore,
                     modifier = Modifier.fillMaxWidth()
                 )
